@@ -20,19 +20,16 @@ async function readGlobalProps() {
 }
 
 // Start server function
-async function startServer() {
+async function startServer(port) {
     const globalProps = await readGlobalProps();
-    const PORT = globalProps.server_port;
+    const PORT = port || globalProps.server_port;
 
     app.use(cors());
     app.use(bodyParser.json());
 
-    app.get("/logs/*", async (_req, res) => {
-        await fetchLogsForCurrentUser();
-    });
-
     async function fetchLogsForCurrentUser() {
-        const command = `sf data query --query "SELECT Id FROM ApexLog WHERE LogUserId='${userId}' ORDER BY LastModifiedDate ASC" --json`;
+        // const command = `sf data query --query "SELECT Id FROM ApexLog WHERE LogUserId='${userId}' ORDER BY LastModifiedDate ASC" --json`;
+        const command = `sf data query --query "SELECT Id FROM ApexLog WHERE LogUserId='${'0058I000003VA12'}' ORDER BY LastModifiedDate ASC LIMIT 2000" --json`;
         const options = { cwd: projectPath }; // Set the current working directory to projectPath
 
         try {
@@ -44,6 +41,7 @@ async function startServer() {
 
             if (stdout) {
                 const logs = JSON.parse(stdout);
+
                 return logs;
             }
         } catch (err) {
@@ -60,6 +58,11 @@ async function startServer() {
         userId = salesforceUserRecordId;
 
         res.json({ salesforceUserRecordId });
+    });
+
+    app.get(`/logs`, async (_req, res) => {
+        let logsJson = await fetchLogsForCurrentUser();
+        res.json(logsJson);
     });
 
     async function getSalesforceUserRecordId(projectPath) {
@@ -103,23 +106,36 @@ async function startServer() {
         .on("error", (err) => {
             if (err.code === "EADDRINUSE") {
                 console.error(`Port ${PORT} is already in use. Please choose a different port.`);
+
+                startServer(PORT+1);
             } else {
                 console.error(`An error occurred: ${err.message}`);
             }
             process.exit(1);
+        })
+        .on("close", () => {
+            console.log("Server closed");
+        })
+        .on("listening", () => {
+            console.log("Server listening on port", PORT);
+            startReactClient();
         });
 
-    const currentDir = process.cwd();
-    // const parentDir = path.dirname(currentDir);
-    // Start React app as a child process
-    const { spawn } = await import("child_process");
-    const reactProcess = spawn("npm", ["run", "start"], {
-        stdio: "inherit",
-        shell: true,
-        env: { ...process.env, BROWSER: "none" },
-        // cwd: parentDir
-        cwd: currentDir,
-    });
+    let reactProcess = null;
+
+    async function startReactClient() {
+        const currentDir = process.cwd();
+        // const parentDir = path.dirname(currentDir);
+        // Start React app as a child process
+        const { spawn } = await import("child_process");
+        reactProcess = spawn("npm", ["run", "start"], {
+            stdio: "inherit",
+            shell: true,
+            env: { ...process.env, BROWSER: "none" },
+            // cwd: parentDir
+            cwd: currentDir,
+        });
+    }
 
     // Handle server shutdown
     process.on("SIGINT", () => {

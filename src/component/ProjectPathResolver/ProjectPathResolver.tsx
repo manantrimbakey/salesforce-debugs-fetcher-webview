@@ -4,9 +4,7 @@ import Grid from "@mui/material/Grid2";
 import { GlobalData } from "../Container/Container";
 import { SERVER_URL } from "../../App";
 import axios from "axios";
-interface ProjectPathResolverProps {
-    globalData: GlobalData;
-}
+import { toggleIsLoading } from "../../Main";
 
 /**
  * ProjectPathResolver is a component that allows the user to enter the project path and submit it to the server.
@@ -17,22 +15,24 @@ interface ProjectPathResolverProps {
 export default function ProjectPathResolver({
     globalData,
     routeToNextScreen,
-}: {
+}: Readonly<{
     globalData: GlobalData;
     routeToNextScreen: Function;
-}) {
+}>) {
     const [projectPath, setProjectPath] = useState<string>(globalData.projectPath || "");
 
     const handleSubmit = async () => {
+        window.dispatchEvent(new CustomEvent("isLoading", { detail: { isLoading: true } }));
+
         // do a post request to the server to update the project path
         let response = await axios.post(`${SERVER_URL}/updateProjectPath`, { projectPath });
         // handle the response with success and error messages
         if (response.status === 200) {
             globalData.projectPath = projectPath;
             routeToNextScreen({ currentScreen: "pathSelector", nextScreen: "logViewer" });
-            console.log("Project path updated successfully");
+            toggleIsLoading(false);
         } else {
-            console.log("Failed to update project path");
+            toggleIsLoading(false);
         }
     };
 

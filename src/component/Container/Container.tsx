@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { SERVER_URL } from "../../App";
-import axios from "axios";
 import ProjectPathResolver from "../ProjectPathResolver/ProjectPathResolver";
 import LogViewerScreen from "../LogViewerScreen/LogViewerScreen";
 
@@ -10,7 +8,6 @@ export type GlobalData = {
 };
 
 export default function Container() {
-    const [data, setData] = useState(null);
 
     let initialized = useRef(false);
 
@@ -23,20 +20,11 @@ export default function Container() {
     const [isLogViewerScreen, setIsLogViewerScreen] = useState(false);
 
     useEffect(() => {
-        // const fetchMessage = async () => {
-        //     try {
-        //         if (!initialized.current) {
-        //             initialized.current = true;
-
-        //             console.log("rendered once");
-        //         }
-        //     } catch (error) {
-        //         console.error("Error fetching message:", error);
-        //         // setData(null);
-        //     }
-        // };
-
-        // fetchMessage();
+        if (!initialized.current) {
+            initialized.current = true;
+            
+            // code here
+        }
     }, []);
 
     const routeToNextScreen = (params: { currentScreen: string; nextScreen: string }) => {

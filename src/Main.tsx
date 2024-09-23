@@ -1,23 +1,30 @@
 import Grid from "@mui/material/Grid2";
-import Paper from "@mui/material/Paper";
 import { GLOBAL_CSS } from "./App";
 import Container from "./component/Container/Container";
+import { Box, LinearProgress } from "@mui/material";
+import { useState } from "react";
 
-const PAPER_CSS = {
-    height: "90vh",
-    width: "100%",
-    display: "inline-block",
-    margin: "auto",
+export function toggleIsLoading(isLoading: boolean) {
+    window.dispatchEvent(new CustomEvent("isLoading", { detail: { isLoading } }));
 }
 
 export default function Main() {
+
+    const [isLoading, setIsLoading] = useState(false);
+    window.addEventListener("isLoading", (event: any) => {
+        setIsLoading(event.detail.isLoading);
+    });
+
     return (
-        <Paper style={PAPER_CSS} elevation={3}>
-            <Grid container>
-                <Grid size={12} style={GLOBAL_CSS}>
-                    <Container />
+        <>
+            {isLoading && <LinearProgress />}
+            <Box>
+                <Grid container>
+                    <Grid size={12} style={GLOBAL_CSS}>
+                        <Container />
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Paper>
+            </Box>
+        </>
     );
 }
