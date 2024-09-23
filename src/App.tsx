@@ -19,7 +19,7 @@ export const SERVER_URL = `${globalProps.server_url}:${globalProps.server_port}`
 
 function App() {
     return (
-        <div className="App" style={GLOBAL_CSS}>
+        <div className="App">
             <Main />
         </div>
     );

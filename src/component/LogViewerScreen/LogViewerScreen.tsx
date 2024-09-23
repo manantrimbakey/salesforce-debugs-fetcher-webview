@@ -18,9 +18,6 @@ export default function LogViewerScreen() {
         if (!initialized.current) {
             initialized.current = true;
 
-            console.log("rendered once");
-
-            
             fetchLogs();
         }
     }, []);
@@ -32,9 +29,7 @@ export default function LogViewerScreen() {
                     Log Viewer
                 </Typography>
             </Grid>
-            <Grid size={12}>
-
-            </Grid>
+            <Grid size={12}></Grid>
         </Grid>
     );
 }
