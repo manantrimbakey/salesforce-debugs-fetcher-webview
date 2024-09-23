@@ -22,6 +22,7 @@
   },
   "include": [
     "src",
-    "global_props.js"
+    "src/server.mjs",
+    "src/component"
   ]
 }

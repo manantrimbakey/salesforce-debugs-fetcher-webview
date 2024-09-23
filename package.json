@@ -27,10 +27,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"nodemon server-app/server.mjs\"",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start-with-server" : "NODE_ENV=development node ./src/server.mjs"
   },
   "eslintConfig": {
     "extends": [
