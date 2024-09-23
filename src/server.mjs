@@ -32,7 +32,7 @@ async function startServer() {
     });
 
     async function fetchLogsForCurrentUser() {
-        const command = `sf data query --query "SELECT Id FROM ApexLog ORDER BY LastModifiedDate ASC" --json`;
+        const command = `sf data query --query "SELECT Id FROM ApexLog WHERE LogUserId='${userId}' ORDER BY LastModifiedDate ASC" --json`;
         const options = { cwd: projectPath }; // Set the current working directory to projectPath
 
         try {
