@@ -31,7 +31,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start-with-server" : "NODE_ENV=development node ./src/server.mjs"
+    "start-with-server" : "node ./src/server.mjs"
   },
   "eslintConfig": {
     "extends": [

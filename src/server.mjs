@@ -19,10 +19,12 @@ async function readGlobalProps() {
     return globalProps;
 }
 
+let PORT = globalProps.server_port;
+
 // Start server function
 async function startServer(port) {
     const globalProps = await readGlobalProps();
-    const PORT = port || globalProps.server_port;
+    PORT = port || globalProps.server_port;
 
     app.use(cors());
     app.use(bodyParser.json());
@@ -106,8 +108,11 @@ async function startServer(port) {
         .on("error", (err) => {
             if (err.code === "EADDRINUSE") {
                 console.error(`Port ${PORT} is already in use. Please choose a different port.`);
+                app.close();
 
-                startServer(PORT+1);
+                PORT++;
+
+                startServer(PORT);
             } else {
                 console.error(`An error occurred: ${err.message}`);
             }
@@ -131,7 +136,7 @@ async function startServer(port) {
         reactProcess = spawn("npm", ["run", "start"], {
             stdio: "inherit",
             shell: true,
-            env: { ...process.env, BROWSER: "none" },
+            env: { ...process.env},
             // cwd: parentDir
             cwd: currentDir,
         });
